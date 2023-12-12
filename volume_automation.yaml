@@ -1,0 +1,40 @@
+alias: ajuster le volume
+description: ""
+trigger:
+  - platform: state
+    entity_id: sensor.media_controller_05ba37_rotary_encoder # Change with your own
+condition: []
+action:
+  - service: input_text.set_value
+    data:
+      value: "{{ trigger.to_state.state }}"
+    target:
+      entity_id: input_text.last_rotary_value
+  - choose:
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ trigger.to_state.state | float > trigger.from_state.state |
+              float }}
+        sequence:
+          - service: button.press
+            target:
+              entity_id: button.swisslbs_rog_01_augmenter_le_volume
+            data: {}
+      - conditions:
+          - condition: template
+            value_template: >-
+              {{ trigger.to_state.state | float < trigger.from_state.state |
+              float }}
+        sequence:
+          - service: button.press
+            target:
+              entity_id: button.swisslbs_rog_01_baisser_le_volume
+            data: {}
+mode: single
+
+# READ CAREFULLY : 
+# USE MUST TO ADD THOSE BELLOWED LINES ON YOUR CONFIGURATION.yaml files
+#input_text:
+# last_rotary_value:
+#  initial: 0
